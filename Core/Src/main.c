@@ -65,7 +65,7 @@ static void MX_USART1_UART_Init(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-
+	char buf[200];
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -88,7 +88,7 @@ int main(void)
   MX_GPIO_Init();
   MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
-
+  RetargetInit(&huart1);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -98,6 +98,9 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+	  printf("\r\nYour name: ");
+	  scanf("%s", buf);
+	  printf("\r\nHello, %s!\r\n", buf);
   }
   /* USER CODE END 3 */
 }
