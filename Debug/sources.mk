@@ -23,5 +23,9 @@ C_DEPS :=
 SUBDIRS := \
 Core/Src \
 Core/Startup \
+Drivers/Components/i3g4250d \
+Drivers/Components/ili9341 \
+Drivers/Components/stmpe811 \
+Drivers/STM32F429I-Discovery \
 Drivers/STM32F4xx_HAL_Driver/Src \
 

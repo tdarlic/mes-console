@@ -10,6 +10,10 @@ RM := rm -rf
 # All of the sources participating in the build are defined here
 -include sources.mk
 -include Drivers/STM32F4xx_HAL_Driver/Src/subdir.mk
+-include Drivers/STM32F429I-Discovery/subdir.mk
+-include Drivers/Components/stmpe811/subdir.mk
+-include Drivers/Components/ili9341/subdir.mk
+-include Drivers/Components/i3g4250d/subdir.mk
 -include Core/Startup/subdir.mk
 -include Core/Src/subdir.mk
 -include objects.mk
@@ -61,7 +65,7 @@ main-build: mes-console.elf secondary-outputs
 
 # Tool invocations
 mes-console.elf mes-console.map: $(OBJS) $(USER_OBJS) /home/tdarlic/STM32CubeIDE/workspace_1.9.0/mes-console/STM32F429ZITX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "mes-console.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"/home/tdarlic/STM32CubeIDE/workspace_1.9.0/mes-console/STM32F429ZITX_FLASH.ld" --specs=nosys.specs -Wl,-Map="mes-console.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+	arm-none-eabi-gcc -o "mes-console.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"/home/tdarlic/STM32CubeIDE/workspace_1.9.0/mes-console/STM32F429ZITX_FLASH.ld" --specs=nosys.specs -Wl,-Map="mes-console.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -u _printf_float -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 

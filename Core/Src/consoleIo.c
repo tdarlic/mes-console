@@ -69,7 +69,7 @@ eConsoleError ConsoleIoSendString(const char *buffer)
 }
 
 /*
- * This function gets called acter completion of RX cycle on UART
+ * This function gets called after completion of RX cycle on UART
  */
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
