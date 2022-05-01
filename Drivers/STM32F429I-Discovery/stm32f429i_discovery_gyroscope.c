@@ -96,7 +96,7 @@ uint8_t BSP_GYRO_Init(void)
     Gyro_InitStructure.Band_Width       = I3G4250D_BANDWIDTH_4;
     Gyro_InitStructure.BlockData_Update = I3G4250D_BlockDataUpdate_Continous;
     Gyro_InitStructure.Endianness       = I3G4250D_BLE_LSB;
-    Gyro_InitStructure.Full_Scale       = I3G4250D_FULLSCALE_500;
+    Gyro_InitStructure.Full_Scale       = I3G4250D_FULLSCALE_245;
 
     /* Configure MEMS: data rate, power mode, full scale and axes */
     ctrl = (uint16_t) (Gyro_InitStructure.Power_Mode  | Gyro_InitStructure.Output_DataRate | \

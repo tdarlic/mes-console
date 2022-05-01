@@ -16,6 +16,10 @@
 #define IGNORE_UNUSED_VARIABLE(x)     if ( &x == &x ) {}
 #define ABS(x)         (x < 0) ? (-x) : x
 
+
+#define GBAR_LEN 8
+#define GDISP_LEN ((GBAR_LEN * 2) + 2)
+
 static eCommandResult_T ConsoleCommandComment(const char buffer[]);
 static eCommandResult_T ConsoleCommandVer(const char buffer[]);
 static eCommandResult_T ConsoleCommandHelp(const char buffer[]);
@@ -31,43 +35,87 @@ static const sConsoleCommandTable_T mConsoleCommandTable[] =
     {"ver", &ConsoleCommandVer, HELP("Get the version string")},
     {"int", &ConsoleCommandParamExampleInt16, HELP("How to get a signed int16 from params list: int -321")},
     {"u16h", &ConsoleCommandParamExampleHexUint16, HELP("How to get a hex u16 from the params list: u16h aB12")},
-	{"gyrop", &ConsoleCommandGyroPresent, HELP("Check is gyro present and responding")},
-	{"gyrotest", &ConsoleCommandGyroTest, HELP("Test gyro: params tcount - number of times to test")},
+	{"gp", &ConsoleCommandGyroPresent, HELP("Check is gyro present and responding")},
+	{"gt", &ConsoleCommandGyroTest, HELP("Test gyro: params 10 - number of seconds to test")},
 
 	CONSOLE_COMMAND_TABLE_END // must be LAST
 };
 
+static void getAxisBar(char * buffer, float val, uint16_t blen){
+    uint8_t lenang = 0;
+    // calculate the individual display strings
+    memset(buffer, 0x00, blen);
+    //Xval = -100.00f; // debug
+    lenang = (ABS((val/245) * GBAR_LEN));
+    if (lenang > GBAR_LEN) {
+        lenang = GBAR_LEN;
+    }
+    if (val < 0){
+        memset(buffer, ' ', GBAR_LEN - lenang);
+        memset(buffer + GBAR_LEN - lenang, '*', lenang);
+        memset(buffer + GBAR_LEN, '-', 1);
+        memset(buffer + GBAR_LEN + 1, ' ', GBAR_LEN);
+    } else {
+        if (0 == val){
+            memset(buffer, ' ', GBAR_LEN);
+            memset(buffer + GBAR_LEN, '0', 1);
+            memset(buffer + GBAR_LEN + 1, ' ', GBAR_LEN);
+        } else {
+            memset(buffer, ' ', GBAR_LEN);
+            memset(buffer + GBAR_LEN, '+', 1);
+            memset(buffer + GBAR_LEN + 1, '*', lenang);
+            memset(buffer + GBAR_LEN + 1 + lenang, ' ', GBAR_LEN - lenang);
+        }
+    }
+}
+
 static eCommandResult_T ConsoleCommandGyroTest(const char buffer[]){
 	float Buffer[3];
 	float Xval, Yval, Zval = 0x00;
-	uint16_t tcount = 0;
+	int16_t tsec;
     char strbuf[100];
     eCommandResult_T result;
+    uint32_t endTick = 0;
+    char xbuf[GDISP_LEN], ybuf[GDISP_LEN], zbuf[GDISP_LEN];
 
-    result = ConsoleReceiveParamInt16(buffer, 1, &tcount);
-    if ( COMMAND_SUCCESS == result ){
+    result = ConsoleReceiveParamInt16(buffer, 1, &tsec);
+    if (COMMAND_SUCCESS == result ){
 		if (BSP_GYRO_Init() == GYRO_OK){
-			while(tcount > 0){
+			ConsoleIoSendString("Starting test:\n");
+			if (tsec < 1){
+				ConsoleIoSendString("Error in duration of test: < 1");
+				return COMMAND_PARAMETER_ERROR;
+			}
+            //function will exit after tsec
+			endTick = HAL_GetTick() + (tsec * 1000);
+
+			while(HAL_GetTick() < endTick){
 				/* Read Gyro Angular data */
 				BSP_GYRO_GetXYZ(Buffer);
 
-				/* Update autoreload and capture compare registers value */
-				Xval = ABS((Buffer[0]));
-				Yval = ABS((Buffer[1]));
-				Zval = ABS((Buffer[2]));
-
+				// device is outputting mdps (millidegrees per second)
+				// to get DPS we need to divide by 1000
+				Xval = (Buffer[0]/1000);
+				Yval = (Buffer[1]/1000);
+				Zval = (Buffer[2]/1000);
 				//Reset the string buffer
 				memset(strbuf, 0x00, 100);
 
-				sprintf(strbuf, "%f | %f | %f\n", Xval, Yval, Zval);
+
+				//sprintf(strbuf, "%+06.2f | %+06.2f | %+06.2f\n", Xval, Yval, Zval);
+				//ConsoleIoSendString(strbuf);
+
+				getAxisBar(xbuf, Xval, GDISP_LEN);
+				getAxisBar(ybuf, Yval, GDISP_LEN);
+				getAxisBar(zbuf, Zval, GDISP_LEN);
+				sprintf(strbuf, "%s|%s|%s\n", xbuf, ybuf, zbuf);
 
 				ConsoleIoSendString(strbuf);
 
-				// Delay for 50 ms
-				HAL_Delay(50);
-				tcount--;
+				// Delay for 10 ms
+				HAL_Delay(10);
 			}
-			ConsoleIoSendString("Test completed");
+			ConsoleIoSendString("Test completed\n");
 		}
     } else {
     	return COMMAND_ERROR;

@@ -1,8 +1,9 @@
-../Core/Src/consoleCommands.c:40:25:ConsoleCommandGyroTest	184	static
-../Core/Src/consoleCommands.c:82:25:ConsoleCommandGyroPresent	16	static
-../Core/Src/consoleCommands.c:91:25:ConsoleCommandComment	16	static
-../Core/Src/consoleCommands.c:98:25:ConsoleCommandHelp	32	static
-../Core/Src/consoleCommands.c:119:25:ConsoleCommandParamExampleInt16	24	static
-../Core/Src/consoleCommands.c:135:25:ConsoleCommandParamExampleHexUint16	24	static
-../Core/Src/consoleCommands.c:149:25:ConsoleCommandVer	24	static
-../Core/Src/consoleCommands.c:161:31:ConsoleCommandsGetTable	4	static
+../Core/Src/consoleCommands.c:44:13:getAxisBar	32	static
+../Core/Src/consoleCommands.c:72:25:ConsoleCommandGyroTest	224	static
+../Core/Src/consoleCommands.c:129:25:ConsoleCommandGyroPresent	16	static
+../Core/Src/consoleCommands.c:138:25:ConsoleCommandComment	16	static
+../Core/Src/consoleCommands.c:145:25:ConsoleCommandHelp	32	static
+../Core/Src/consoleCommands.c:166:25:ConsoleCommandParamExampleInt16	24	static
+../Core/Src/consoleCommands.c:182:25:ConsoleCommandParamExampleHexUint16	24	static
+../Core/Src/consoleCommands.c:196:25:ConsoleCommandVer	24	static
+../Core/Src/consoleCommands.c:208:31:ConsoleCommandsGetTable	4	static
