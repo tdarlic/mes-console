@@ -9,6 +9,8 @@ RM := rm -rf
 
 # All of the sources participating in the build are defined here
 -include sources.mk
+-include Drivers/Utilities/Log/subdir.mk
+-include Drivers/Utilities/Fonts/subdir.mk
 -include Drivers/STM32F4xx_HAL_Driver/Src/subdir.mk
 -include Drivers/STM32F429I-Discovery/subdir.mk
 -include Drivers/Components/stmpe811/subdir.mk

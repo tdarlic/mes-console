@@ -28,4 +28,6 @@ Drivers/Components/ili9341 \
 Drivers/Components/stmpe811 \
 Drivers/STM32F429I-Discovery \
 Drivers/STM32F4xx_HAL_Driver/Src \
+Drivers/Utilities/Fonts \
+Drivers/Utilities/Log \
 

@@ -7,12 +7,14 @@
 //		3. Implement the function, using ConsoleReceiveParam<Type> to get the parameters from the buffer.
 #include <stdio.h>
 #include <string.h>
+#include "lcd_log.h"
 #include "consoleCommands.h"
 #include "console.h"
 #include "consoleIo.h"
 #include "version.h"
 #include "../../Drivers/Components/i3g4250d/i3g4250d.h"
 #include "../../Drivers/STM32F429I-Discovery/stm32f429i_discovery_gyroscope.h"
+
 
 #define IGNORE_UNUSED_VARIABLE(x)  if ( &x == &x ) {}
 #define ABS(x)  (x < 0) ? (-x) : x
@@ -29,6 +31,7 @@ static eCommandResult_T ConsoleCommandParamExampleHexUint16(const char buffer[])
 static eCommandResult_T ConsoleCommandGyroPresent(const char buffer[]);
 static eCommandResult_T ConsoleCommandGyroTest(const char buffer[]);
 static eCommandResult_T ConsoleCommandComment(const char buffer[]);
+static eCommandResult_T ConsoleTestScreenLog(const char buffer[]);
 
 static const sConsoleCommandTable_T mConsoleCommandTable[] =
 {
@@ -39,9 +42,21 @@ static const sConsoleCommandTable_T mConsoleCommandTable[] =
     {"u16h", &ConsoleCommandParamExampleHexUint16, HELP("How to get a hex u16 from the params list: u16h aB12")},
 	{"gp", &ConsoleCommandGyroPresent, HELP("Check is gyro present and responding")},
 	{"gt", &ConsoleCommandGyroTest, HELP("Test gyro: params 10 - number of seconds to test")},
+	{"slt", &ConsoleTestScreenLog, HELP("Screen log test")},
 
 	CONSOLE_COMMAND_TABLE_END // must be LAST
 };
+
+static eCommandResult_T ConsoleTestScreenLog(const char buffer[])
+{
+	ConsoleIoSendString("Testing screen log\n");
+	/* Show Header and Footer texts */
+    BSP_LCD_Init();
+    LCD_LOG_Init();
+    LCD_LOG_SetHeader((uint8_t*)"This is the header");
+    LCD_LOG_SetFooter((uint8_t*)"This is the footer");
+    return COMMAND_SUCCESS;
+}
 
 static void getAxisBar(char * buffer, float val, uint16_t blen){
     uint8_t lenang = 0;
@@ -96,6 +111,7 @@ static eCommandResult_T ConsoleCommandGyroTest(const char buffer[]){
     char xbuf[GDISP_LEN], ybuf[GDISP_LEN], zbuf[GDISP_LEN];
 
     result = ConsoleReceiveParamInt16(buffer, 1, &tsec);
+
     if (COMMAND_SUCCESS == result ){
 		if (BSP_GYRO_Init(GYRO_SCALE) == GYRO_OK){
 			ConsoleIoSendString("Starting test:\n");

@@ -1,5 +1,7 @@
 Core/Src/consoleCommands.o: ../Core/Src/consoleCommands.c \
- ../Core/Inc/consoleCommands.h ../Core/Inc/console.h \
+ ../Drivers/Utilities/Log/lcd_log.h ../Core/Inc/lcd_log_conf.h \
+ ../Core/Inc/../../Drivers/STM32F429I-Discovery/stm32f429i_discovery_lcd.h \
+ ../Core/Inc/../../Drivers/STM32F429I-Discovery/stm32f429i_discovery.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h \
  ../Core/Inc/stm32f4xx_hal_conf.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h \
@@ -34,14 +36,21 @@ Core/Src/consoleCommands.o: ../Core/Src/consoleCommands.c \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr_ex.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_spi.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h \
+ ../Core/Inc/../../Drivers/STM32F429I-Discovery/stm32f429i_discovery_sdram.h \
+ ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy/../../../Utilities/Fonts/fonts.h \
+ ../Core/Inc/../../Drivers/STM32F429I-Discovery/../Components/ili9341/ili9341.h \
+ ../Core/Inc/../../Drivers/STM32F429I-Discovery/../Components/ili9341/../Common/lcd.h \
+ ../Core/Inc/consoleCommands.h ../Core/Inc/console.h \
  ../Core/Inc/console.h ../Core/Inc/consoleIo.h ../Core/Inc/version.h \
  ../Core/Src/../../Drivers/Components/i3g4250d/i3g4250d.h \
  ../Core/Src/../../Drivers/Components/i3g4250d/../Common/gyro.h \
  ../Core/Src/../../Drivers/STM32F429I-Discovery/stm32f429i_discovery_gyroscope.h \
  ../Core/Src/../../Drivers/STM32F429I-Discovery/stm32f429i_discovery.h \
  ../Core/Src/../../Drivers/STM32F429I-Discovery/../Components/i3g4250d/i3g4250d.h
-../Core/Inc/consoleCommands.h:
-../Core/Inc/console.h:
+../Drivers/Utilities/Log/lcd_log.h:
+../Core/Inc/lcd_log_conf.h:
+../Core/Inc/../../Drivers/STM32F429I-Discovery/stm32f429i_discovery_lcd.h:
+../Core/Inc/../../Drivers/STM32F429I-Discovery/stm32f429i_discovery.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:
 ../Core/Inc/stm32f4xx_hal_conf.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h:
@@ -76,6 +85,12 @@ Core/Src/consoleCommands.o: ../Core/Src/consoleCommands.c \
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr_ex.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_spi.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h:
+../Core/Inc/../../Drivers/STM32F429I-Discovery/stm32f429i_discovery_sdram.h:
+../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy/../../../Utilities/Fonts/fonts.h:
+../Core/Inc/../../Drivers/STM32F429I-Discovery/../Components/ili9341/ili9341.h:
+../Core/Inc/../../Drivers/STM32F429I-Discovery/../Components/ili9341/../Common/lcd.h:
+../Core/Inc/consoleCommands.h:
+../Core/Inc/console.h:
 ../Core/Inc/console.h:
 ../Core/Inc/consoleIo.h:
 ../Core/Inc/version.h:
