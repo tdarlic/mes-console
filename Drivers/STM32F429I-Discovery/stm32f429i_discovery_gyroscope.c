@@ -71,18 +71,21 @@ static GYRO_DrvTypeDef *GyroscopeDrv;
 /** @defgroup STM32F429I_DISCOVERY_GYROSCOPE_Private_Functions STM32F429I DISCOVERY GYROSCOPE Private Functions
   * @{
   */
-  
+
+uint8_t gyroScale;
+
 /**
   * @brief  Set gyroscope Initialization.
   * @retval GYRO_OK if no problem during initialization
   */
-
-uint8_t BSP_GYRO_Init(void)
+uint8_t BSP_GYRO_Init(uint8_t scale)
 {  
   uint8_t ret = GYRO_ERROR;
   uint16_t ctrl = 0x0000;
   GYRO_InitTypeDef         Gyro_InitStructure;
   GYRO_FilterConfigTypeDef Gyro_FilterStructure = {0,0};
+
+  gyroScale = scale;
 
   if (I3g4250Drv.ReadID() == I_AM_I3G4250D)
   {
@@ -96,7 +99,7 @@ uint8_t BSP_GYRO_Init(void)
     Gyro_InitStructure.Band_Width       = I3G4250D_BANDWIDTH_4;
     Gyro_InitStructure.BlockData_Update = I3G4250D_BlockDataUpdate_Continous;
     Gyro_InitStructure.Endianness       = I3G4250D_BLE_LSB;
-    Gyro_InitStructure.Full_Scale       = I3G4250D_FULLSCALE_245;
+    Gyro_InitStructure.Full_Scale       = gyroScale;// I3G4250D_FULLSCALE_245;
 
     /* Configure MEMS: data rate, power mode, full scale and axes */
     ctrl = (uint16_t) (Gyro_InitStructure.Power_Mode  | Gyro_InitStructure.Output_DataRate | \

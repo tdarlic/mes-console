@@ -11,22 +11,24 @@
 #include "console.h"
 #include "consoleIo.h"
 #include "version.h"
+#include "../../Drivers/Components/i3g4250d/i3g4250d.h"
 #include "../../Drivers/STM32F429I-Discovery/stm32f429i_discovery_gyroscope.h"
 
-#define IGNORE_UNUSED_VARIABLE(x)     if ( &x == &x ) {}
-#define ABS(x)         (x < 0) ? (-x) : x
-
+#define IGNORE_UNUSED_VARIABLE(x)  if ( &x == &x ) {}
+#define ABS(x)  (x < 0) ? (-x) : x
 
 #define GBAR_LEN 8
 #define GDISP_LEN ((GBAR_LEN * 2) + 2)
+//Set the full scale for the gyro
+#define GYRO_SCALE I3G4250D_FULLSCALE_245
 
-static eCommandResult_T ConsoleCommandComment(const char buffer[]);
 static eCommandResult_T ConsoleCommandVer(const char buffer[]);
 static eCommandResult_T ConsoleCommandHelp(const char buffer[]);
 static eCommandResult_T ConsoleCommandParamExampleInt16(const char buffer[]);
 static eCommandResult_T ConsoleCommandParamExampleHexUint16(const char buffer[]);
 static eCommandResult_T ConsoleCommandGyroPresent(const char buffer[]);
 static eCommandResult_T ConsoleCommandGyroTest(const char buffer[]);
+static eCommandResult_T ConsoleCommandComment(const char buffer[]);
 
 static const sConsoleCommandTable_T mConsoleCommandTable[] =
 {
@@ -43,10 +45,25 @@ static const sConsoleCommandTable_T mConsoleCommandTable[] =
 
 static void getAxisBar(char * buffer, float val, uint16_t blen){
     uint8_t lenang = 0;
+    uint16_t gyro_scale_divider;
     // calculate the individual display strings
     memset(buffer, 0x00, blen);
     //Xval = -100.00f; // debug
-    lenang = (ABS((val/245) * GBAR_LEN));
+    switch (GYRO_SCALE){
+        case I3G4250D_FULLSCALE_245:
+            gyro_scale_divider = 245;
+            break;
+        case I3G4250D_FULLSCALE_500:
+            gyro_scale_divider = 500;
+            break;
+        case I3G4250D_FULLSCALE_2000:
+            gyro_scale_divider = 2000;
+            break;
+        default:
+            gyro_scale_divider = 245;
+    }
+
+    lenang = (ABS((val/gyro_scale_divider) * GBAR_LEN));
     if (lenang > GBAR_LEN) {
         lenang = GBAR_LEN;
     }
@@ -80,7 +97,7 @@ static eCommandResult_T ConsoleCommandGyroTest(const char buffer[]){
 
     result = ConsoleReceiveParamInt16(buffer, 1, &tsec);
     if (COMMAND_SUCCESS == result ){
-		if (BSP_GYRO_Init() == GYRO_OK){
+		if (BSP_GYRO_Init(GYRO_SCALE) == GYRO_OK){
 			ConsoleIoSendString("Starting test:\n");
 			if (tsec < 1){
 				ConsoleIoSendString("Error in duration of test: < 1");
@@ -90,6 +107,7 @@ static eCommandResult_T ConsoleCommandGyroTest(const char buffer[]){
 			endTick = HAL_GetTick() + (tsec * 1000);
 
 			while(HAL_GetTick() < endTick){
+
 				/* Read Gyro Angular data */
 				BSP_GYRO_GetXYZ(Buffer);
 
@@ -129,7 +147,7 @@ static eCommandResult_T ConsoleCommandGyroTest(const char buffer[]){
  * In case that the gyro is present the device will return Gyro OK else Gyro error
  */
 static eCommandResult_T ConsoleCommandGyroPresent(const char buffer[]){
-	if (BSP_GYRO_Init() == GYRO_OK){
+	if (BSP_GYRO_Init(GYRO_SCALE) == GYRO_OK){
 		ConsoleIoSendString("Gyro OK\n");
 	} else {
 		ConsoleIoSendString("Gyro Error\n");

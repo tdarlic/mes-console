@@ -74,7 +74,7 @@ typedef enum
   * @{
   */
 /* Gyroscope Functions */ 
-uint8_t BSP_GYRO_Init(void);
+uint8_t BSP_GYRO_Init(uint8_t scale);
 void    BSP_GYRO_Reset(void);
 uint8_t BSP_GYRO_ReadID(void);
 void    BSP_GYRO_ITConfig(GYRO_InterruptConfigTypeDef *pIntConfigStruct);
