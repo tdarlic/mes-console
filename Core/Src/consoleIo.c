@@ -11,11 +11,12 @@ UART_HandleTypeDef *consoleUartHandle;
 uint8_t consoleByteBuffer = 0;
 
 // This buffer will hold command
-uint8_t consoleCommandBuffer[20];
+char consoleCommandBuffer[20];
 
-uint8_t consoleRxCompleted = 0;
+uint16_t consoleBufferCount = 0;
 
-uint8_t consoleBufferCount = 0;
+uint8_t consoleCommandComplete = 0;
+
 
 eConsoleError ConsoleReset(void);
 eConsoleError ConsoleByteReset(void);
@@ -29,26 +30,16 @@ eConsoleError ConsoleIoInit(UART_HandleTypeDef *huart)
 }
 
 /**
- * Resets the console variabes
+ * Resets the console
  */
 eConsoleError ConsoleReset(void)
 {
 	consoleByteBuffer = 0;
-	consoleRxCompleted = 0;
+	consoleCommandComplete = 0;
 	consoleBufferCount = 0;
 	memset(consoleCommandBuffer, 0, 20);
 	return CONSOLE_SUCCESS;
 }
-
-/**
- * Resets the console variabes
- */
-eConsoleError ConsoleByteReset(void)
-{
-	consoleRxCompleted = 0;
-	consoleBufferCount = 0;
-}
-
 
 // This is modified for the Wokwi RPi Pico simulator. It works fine 
 // but that's partially because the serial terminal sends all of the 
@@ -56,20 +47,18 @@ eConsoleError ConsoleByteReset(void)
 // wasn't called fast enough?
 eConsoleError ConsoleIoReceive(uint8_t *buffer, const uint32_t bufferLength, uint32_t *readLength)
 {
-	uint32_t i = 0;
-	char ch;
+    uint16_t i = 0;
+    *readLength = 0;
 
-	while (consoleRxCompleted)
-	{
-		while (i < consoleBufferCount + 1){
+    if (consoleCommandComplete){
+		while (consoleCommandBuffer[i] != 0x00){
 			buffer[i] = consoleCommandBuffer[i];
+			i++;
 		}
-		*readLength = consoleBufferCount;
-		printf("%s", consoleCommandBuffer);
-		ConsoleByteReset();
-	}
-
-	*readLength = i;
+		*readLength = i;
+		ConsoleReset();
+    }
+    
 	return CONSOLE_SUCCESS;
 }
 
@@ -84,10 +73,15 @@ eConsoleError ConsoleIoSendString(const char *buffer)
  */
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
-	consoleCommandBuffer[consoleBufferCount++] = consoleByteBuffer;
-	if ('\n' == consoleByteBuffer){
-		consoleRxCompleted = 1;
+	char lastChar = 0;
+	// if console command complete it means that previous command was not parsed yet
+	if (!consoleCommandComplete){
+		lastChar = consoleByteBuffer;
+		consoleCommandBuffer[consoleBufferCount++] = lastChar;
+		if ('\n' == lastChar){
+			consoleCommandComplete = 1;
+		}
+		HAL_UART_Receive_IT(consoleUartHandle, &consoleByteBuffer, 1);
 	}
-	HAL_UART_Receive_IT(consoleUartHandle, &consoleByteBuffer, 1);
 }
 
